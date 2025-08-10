@@ -1,15 +1,35 @@
-import { useState } from "react";
-import MatchForm from "@/components/organisms/MatchForm";
-import PredictionCard from "@/components/molecules/PredictionCard";
-import OddsVisualization from "@/components/organisms/OddsVisualization";
-import PredictionHistory from "@/components/organisms/PredictionHistory";
+import React, { useEffect, useState } from "react";
 import { predictionService } from "@/services/api/predictionService";
+import { scoresService } from "@/services/api/scoresService";
 import { toast } from "react-toastify";
+import PredictionHistory from "@/components/organisms/PredictionHistory";
+import MatchForm from "@/components/organisms/MatchForm";
+import OddsVisualization from "@/components/organisms/OddsVisualization";
+import PredictionCard from "@/components/molecules/PredictionCard";
 
 const Dashboard = () => {
   const [currentPrediction, setCurrentPrediction] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshHistory, setRefreshHistory] = useState(0);
+
+// Vérification automatique des scores au démarrage
+  useEffect(() => {
+    const checkScoresOnStartup = async () => {
+      try {
+        const results = await predictionService.checkAllPendingScores();
+        const finished = results.filter(r => r.status === 'terminé');
+        if (finished.length > 0) {
+          toast.success(`${finished.length} nouveau(x) résultat(s) récupéré(s) depuis 1XBET!`);
+          setRefreshHistory(prev => prev + 1);
+        }
+      } catch (error) {
+        console.log('Vérification automatique échouée:', error.message);
+      }
+    };
+
+    // Vérifier après 2 secondes de chargement
+    setTimeout(checkScoresOnStartup, 2000);
+  }, []);
 
   const generatePrediction = async (matchData) => {
     setIsLoading(true);
@@ -39,6 +59,19 @@ const Dashboard = () => {
       setRefreshHistory(prev => prev + 1);
       
       toast.success(`Prédiction générée: ${analysis.predictedScore} avec ${analysis.confidence}% de confiance!`);
+      
+      // Vérifier immédiatement si le match a déjà un résultat sur 1XBET
+      try {
+        const scoreCheck = await scoresService.verifyPredictionResult(prediction);
+        if (scoreCheck.actualScore) {
+          toast.info(`Résultat déjà disponible sur 1XBET: ${scoreCheck.actualScore}`);
+        } else if (scoreCheck.currentScore) {
+          toast.info(`Match en cours sur 1XBET: ${scoreCheck.currentScore} (${scoreCheck.minute}')`);
+        }
+      } catch (error) {
+        // Ignore les erreurs de vérification automatique
+      }
+      
     } catch (error) {
       console.error("Error generating prediction:", error);
       toast.error("Erreur lors de la génération de la prédiction");
@@ -102,69 +135,59 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-br from-background via-secondary-500/20 to-background border-b border-primary/20">
+    {/* Hero Section */}
+    <div
+        className="bg-gradient-to-br from-background via-secondary-500/20 to-background border-b border-primary/20">
         <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="text-center">
-            <h1 className="text-5xl font-display font-bold mb-4">
-              <span className="gradient-text">FIFA</span>{" "}
-              <span className="text-white">PREDICT</span>
-            </h1>
-            <p className="text-xl text-gray-300 mb-2">
-              Prédictions IA pour FIFA Virtual Football
-            </p>
-            <p className="text-gray-400 text-sm">
-              FC 24 • Championnat d'Angleterre 4×4 • Analyse avancée des cotes
-            </p>
-          </div>
+            <div className="text-center">
+                <h1 className="text-5xl font-display font-bold mb-4">
+                    <span className="gradient-text">FIFA</span>{" "}
+                    <span className="text-white">PREDICT</span>
+                </h1>
+                <p className="text-xl text-gray-300 mb-2">Prédictions IA pour FIFA Virtual Football
+                                </p>
+                <p className="text-gray-400 text-sm">FC 24 • Championnat d'Angleterre 4×4 • Analyse avancée des cotes
+                                </p>
+            </div>
         </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+    </div>
+    {/* Main Content */}
+    <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Left Column - Match Form */}
-          <div className="space-y-6">
-            <MatchForm onSubmit={generatePrediction} isLoading={isLoading} />
-          </div>
-
-          {/* Right Column - Prediction & Visualization */}
-          <div className="space-y-6">
-            <PredictionCard 
-              prediction={currentPrediction} 
-              isLoading={isLoading} 
-            />
-            
-            <OddsVisualization 
-              scoreOdds={currentPrediction?.scoreOdds || []} 
-              prediction={currentPrediction}
-            />
-          </div>
+            {/* Left Column - Match Form */}
+            <div className="space-y-6">
+                <MatchForm onSubmit={generatePrediction} isLoading={isLoading} />
+            </div>
+            {/* Right Column - Prediction & Visualization */}
+            <div className="space-y-6">
+                <PredictionCard prediction={currentPrediction} isLoading={isLoading} />
+                <OddsVisualization
+                    scoreOdds={currentPrediction?.scoreOdds || []}
+                    prediction={currentPrediction} />
+            </div>
         </div>
-
         {/* History Section */}
         <div className="mt-12">
-          <PredictionHistory refreshTrigger={refreshHistory} />
+            <PredictionHistory refreshTrigger={refreshHistory} />
         </div>
-      </div>
-
-      {/* Footer */}
-      <footer className="bg-surface/30 border-t border-primary/20 mt-16">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center">
-                <span className="text-black font-bold text-sm">FP</span>
-              </div>
-              <span className="text-xl font-display font-bold text-white">FIFA Predict</span>
-            </div>
-            <p className="text-gray-400 text-sm">
-              Powered by Advanced AI • FIFA Virtual FC 24 Specialist • Bookmaker Data Analysis
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
+    {/* Footer */}
+    <footer className="bg-surface/30 border-t border-primary/20 mt-16">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="text-center">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                    <div
+                        className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center">
+                        <span className="text-black font-bold text-sm">FP</span>
+                    </div>
+                    <span className="text-xl font-display font-bold text-white">FIFA Predict</span>
+                    <span className="text-xl font-display font-bold text-white">FIFA Predict</span>
+                </div>
+                <p className="text-gray-400 text-sm">Powered by Advanced AI • FIFA Virtual FC 24 Specialist • Intégration 1XBET • Scores en Temps Réel
+                              </p></div>
+        </div>
+    </footer>
+</div>
   );
 };
 

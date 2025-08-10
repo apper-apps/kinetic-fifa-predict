@@ -1,21 +1,21 @@
-import { useState, useEffect } from "react";
-import Card from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
-import ApperIcon from "@/components/ApperIcon";
+import React, { useEffect, useState } from "react";
 import { predictionService } from "@/services/api/predictionService";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
-
+import Button from "@/components/atoms/Button";
+import Card from "@/components/atoms/Card";
 const PredictionHistory = ({ refreshTrigger }) => {
   const [predictions, setPredictions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const loadPredictions = async () => {
-    try {
+try {
       setLoading(true);
       setError("");
       await new Promise(resolve => setTimeout(resolve, 800));
@@ -51,7 +51,7 @@ const PredictionHistory = ({ refreshTrigger }) => {
     if (prediction.actualResult) {
       return prediction.actualResult.correct ? (
         <span className="px-2 py-1 bg-primary/20 text-primary rounded-full text-xs font-medium border border-primary/30">
-          <ApperIcon name="CheckCircle" size={12} className="inline mr-1" />
+<ApperIcon name="CheckCircle" size={12} className="inline mr-1" />
           Correct
         </span>
       ) : (
@@ -67,6 +67,35 @@ const PredictionHistory = ({ refreshTrigger }) => {
         En attente
       </span>
     );
+  };
+
+  const checkScore = async (predictionId) => {
+    try {
+      const result = await predictionService.checkScoresWith1XBET(predictionId);
+      toast.success(result.message);
+      if (result.status === 'terminé') {
+        loadPredictions(); // Actualiser la liste
+      }
+    } catch (error) {
+      toast.error(`Erreur lors de la vérification: ${error.message}`);
+    }
+  };
+
+  const checkAllScores = async () => {
+    try {
+      toast.info("Vérification des scores en cours...");
+      const results = await predictionService.checkAllPendingScores();
+      
+      const finished = results.filter(r => r.status === 'terminé');
+      if (finished.length > 0) {
+        toast.success(`${finished.length} résultat(s) mis à jour depuis 1XBET!`);
+        loadPredictions();
+      } else {
+        toast.info("Aucun nouveau résultat disponible");
+      }
+    } catch (error) {
+      toast.error(`Erreur lors de la vérification: ${error.message}`);
+    }
   };
 
   if (loading) return <Loading />;
@@ -88,18 +117,29 @@ const PredictionHistory = ({ refreshTrigger }) => {
             </p>
           </div>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={loadPredictions}
-          className="flex items-center gap-2"
-        >
-          <ApperIcon name="RefreshCw" size={16} />
-          Actualiser
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={checkAllScores}
+            className="flex items-center gap-2 bg-accent/10 border-accent/30 text-accent hover:bg-accent/20"
+          >
+            <ApperIcon name="Zap" size={16} />
+            1XBET
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={loadPredictions}
+            className="flex items-center gap-2"
+          >
+            <ApperIcon name="RefreshCw" size={16} />
+            Actualiser
+          </Button>
+        </div>
       </div>
 
-      <div className="space-y-4 max-h-[500px] overflow-y-auto">
+<div className="space-y-4 max-h-[500px] overflow-y-auto">
         {predictions.map((prediction) => (
           <div
             key={prediction.Id}
@@ -147,7 +187,33 @@ const PredictionHistory = ({ refreshTrigger }) => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-xs text-gray-400">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="text-sm">
+                  <span className="text-gray-400">Prédit:</span>{" "}
+                  <span className="text-primary font-medium">{prediction.predictedScore}</span>
+                </div>
+                {prediction.actualResult && (
+                  <div className="text-sm">
+                    <span className="text-gray-400">Réel:</span>{" "}
+                    <span className="text-white font-medium">{prediction.actualResult.actualScore}</span>
+                  </div>
+                )}
+              </div>
+              
+              {!prediction.actualResult && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => checkScore(prediction.Id)}
+                  className="text-accent hover:text-accent hover:bg-accent/10"
+                >
+                  <ApperIcon name="Search" size={14} />
+                </Button>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between text-xs text-gray-400 mt-3">
               <span>{prediction.scoreOdds?.length || 0} scores analysés</span>
               <span>
                 {format(new Date(prediction.timestamp), "dd/MM/yyyy HH:mm", { locale: fr })}
