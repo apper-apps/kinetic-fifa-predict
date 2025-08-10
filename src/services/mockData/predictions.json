@@ -1,0 +1,74 @@
+[
+  {
+    "Id": 1,
+    "homeTeam": "Manchester City",
+    "awayTeam": "Liverpool",
+    "matchDateTime": "2024-01-15T20:30:00Z",
+    "predictedScore": "1-0",
+    "confidence": 78,
+    "scoreOdds": [
+      {"score": "0-0", "coefficient": 8.5, "probability": "11.8"},
+      {"score": "1-0", "coefficient": 4.2, "probability": "23.8"},
+      {"score": "0-1", "coefficient": 6.1, "probability": "16.4"},
+      {"score": "1-1", "coefficient": 3.8, "probability": "26.3"},
+      {"score": "2-0", "coefficient": 12.0, "probability": "8.3"}
+    ],
+    "topPredictions": [
+      {"score": "1-1", "probability": "26.3"},
+      {"score": "1-0", "probability": "23.8"},
+      {"score": "0-1", "probability": "16.4"}
+    ],
+    "timestamp": "2024-01-15T18:45:00Z",
+    "actualResult": {
+      "actualScore": "1-0",
+      "correct": true
+    }
+  },
+  {
+    "Id": 2,
+    "homeTeam": "Chelsea",
+    "awayTeam": "Arsenal",
+    "matchDateTime": "2024-01-16T19:00:00Z",
+    "predictedScore": "0-1",
+    "confidence": 65,
+    "scoreOdds": [
+      {"score": "0-0", "coefficient": 7.2, "probability": "13.9"},
+      {"score": "1-0", "coefficient": 5.8, "probability": "17.2"},
+      {"score": "0-1", "coefficient": 4.5, "probability": "22.2"},
+      {"score": "1-1", "coefficient": 4.8, "probability": "20.8"},
+      {"score": "2-1", "coefficient": 15.5, "probability": "6.5"}
+    ],
+    "topPredictions": [
+      {"score": "0-1", "probability": "22.2"},
+      {"score": "1-1", "probability": "20.8"},
+      {"score": "1-0", "probability": "17.2"}
+    ],
+    "timestamp": "2024-01-16T17:30:00Z",
+    "actualResult": {
+      "actualScore": "1-1",
+      "correct": false
+    }
+  },
+  {
+    "Id": 3,
+    "homeTeam": "Tottenham",
+    "awayTeam": "Newcastle",
+    "matchDateTime": "2024-01-17T21:15:00Z",
+    "predictedScore": "1-1",
+    "confidence": 82,
+    "scoreOdds": [
+      {"score": "0-0", "coefficient": 9.1, "probability": "11.0"},
+      {"score": "1-0", "coefficient": 5.2, "probability": "19.2"},
+      {"score": "0-1", "coefficient": 7.3, "probability": "13.7"},
+      {"score": "1-1", "coefficient": 3.5, "probability": "28.6"},
+      {"score": "2-0", "coefficient": 11.8, "probability": "8.5"},
+      {"score": "0-2", "coefficient": 18.2, "probability": "5.5"}
+    ],
+    "topPredictions": [
+      {"score": "1-1", "probability": "28.6"},
+      {"score": "1-0", "probability": "19.2"},
+      {"score": "0-1", "probability": "13.7"}
+    ],
+    "timestamp": "2024-01-17T19:45:00Z"
+  }
+]
