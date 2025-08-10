@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { predictionService } from "@/services/api/predictionService";
 import { scoresService } from "@/services/api/scoresService";
 import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
 import PredictionHistory from "@/components/organisms/PredictionHistory";
 import MatchForm from "@/components/organisms/MatchForm";
 import OddsVisualization from "@/components/organisms/OddsVisualization";
@@ -174,17 +175,82 @@ const Dashboard = () => {
     {/* Footer */}
     <footer className="bg-surface/30 border-t border-primary/20 mt-16">
         <div className="max-w-7xl mx-auto px-6 py-8">
-            <div className="text-center">
-                <div className="flex items-center justify-center gap-2 mb-4">
-                    <div
-                        className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center">
-                        <span className="text-black font-bold text-sm">FP</span>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                {/* Logo et Description */}
+                <div className="text-center md:text-left">
+                    <div className="flex items-center justify-center md:justify-start gap-2 mb-4">
+                        <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center">
+                            <span className="text-black font-bold text-sm">FP</span>
+                        </div>
+                        <span className="text-xl font-display font-bold text-white">FIFA Predict</span>
                     </div>
-                    <span className="text-xl font-display font-bold text-white">FIFA Predict</span>
-                    <span className="text-xl font-display font-bold text-white">FIFA Predict</span>
+                    <p className="text-gray-400 text-sm">Powered by Advanced AI • FIFA Virtual FC 24 Specialist • Intégration 1XBET • Scores en Temps Réel</p>
                 </div>
-                <p className="text-gray-400 text-sm">Powered by Advanced AI • FIFA Virtual FC 24 Specialist • Intégration 1XBET • Scores en Temps Réel
-                              </p></div>
+
+                {/* Moyens de Paiement */}
+                <div className="text-center">
+                    <h3 className="text-white font-semibold mb-4 flex items-center justify-center gap-2">
+                        <ApperIcon name="CreditCard" size={18} className="text-primary" />
+                        Moyens de Paiement
+                    </h3>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="flex items-center gap-2 bg-gradient-to-r from-orange-500/10 to-orange-600/10 border border-orange-500/30 rounded-lg px-3 py-2">
+                            <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                                <span className="text-white text-xs font-bold">O</span>
+                            </div>
+                            <span className="text-white text-sm font-medium">Orange</span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 border border-yellow-500/30 rounded-lg px-3 py-2">
+                            <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
+                                <span className="text-black text-xs font-bold">M</span>
+                            </div>
+                            <span className="text-white text-sm font-medium">MTN</span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-gradient-to-r from-blue-500/10 to-blue-600/10 border border-blue-500/30 rounded-lg px-3 py-2">
+                            <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                                <ApperIcon name="Waves" size={12} className="text-white" />
+                            </div>
+                            <span className="text-white text-sm font-medium">Wave</span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-gradient-to-r from-green-500/10 to-green-600/10 border border-green-500/30 rounded-lg px-3 py-2">
+                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                <ApperIcon name="Coins" size={12} className="text-white" />
+                            </div>
+                            <span className="text-white text-sm font-medium">Moov</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Contact Créateur */}
+                <div className="text-center md:text-right">
+                    <h3 className="text-white font-semibold mb-4 flex items-center justify-center md:justify-end gap-2">
+                        <ApperIcon name="User" size={18} className="text-accent" />
+                        Créateur
+                    </h3>
+                    <div className="space-y-3">
+                        <p className="text-primary font-medium">Ange Christ</p>
+                        <div className="space-y-2">
+                            <a href="https://wa.me/2250503951888" target="_blank" rel="noopener noreferrer" 
+                               className="flex items-center justify-center md:justify-end gap-2 text-green-400 hover:text-green-300 transition-colors">
+                                <ApperIcon name="MessageCircle" size={16} />
+                                <span className="text-sm">WhatsApp: 0503951888</span>
+                            </a>
+                            <a href="https://t.me/+2250710335536" target="_blank" rel="noopener noreferrer"
+                               className="flex items-center justify-center md:justify-end gap-2 text-blue-400 hover:text-blue-300 transition-colors">
+                                <ApperIcon name="Send" size={16} />
+                                <span className="text-sm">Telegram: 0710335536</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {/* Séparateur */}
+            <div className="border-t border-primary/20 pt-6">
+                <p className="text-center text-gray-500 text-xs">
+                    © 2024 FIFA Predict - Tous droits réservés • Développé avec ❤️ par Ange Christ
+                </p>
+            </div>
         </div>
     </footer>
 </div>
