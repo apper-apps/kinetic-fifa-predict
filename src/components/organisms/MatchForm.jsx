@@ -8,12 +8,13 @@ import ApperIcon from "@/components/ApperIcon";
 import { toast } from "react-toastify";
 
 const MatchForm = ({ onSubmit, isLoading }) => {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     homeTeam: "",
     awayTeam: "",
     matchDate: "",
     matchTime: "",
-    scoreOdds: Array(5).fill({ score: "", coefficient: "" })
+    scoreOdds: Array(5).fill({ score: "", coefficient: "" }),
+    useHeadToHeadData: true
   });
 
   const [errors, setErrors] = useState({});
@@ -92,26 +93,28 @@ const MatchForm = ({ onSubmit, isLoading }) => {
     );
 
     const matchData = {
-      homeTeam: formData.homeTeam.trim(),
+homeTeam: formData.homeTeam.trim(),
       awayTeam: formData.awayTeam.trim(),
       dateTime: `${formData.matchDate} ${formData.matchTime}`,
       scoreOdds: validScoreOdds.map(item => ({
         score: item.score.trim(),
         coefficient: parseFloat(item.coefficient),
         probability: ((1 / parseFloat(item.coefficient)) * 100).toFixed(1)
-      }))
+      })),
+      useHeadToHeadData: formData.useHeadToHeadData
     };
 
     onSubmit(matchData);
   };
 
   const clearForm = () => {
-    setFormData({
+setFormData({
       homeTeam: "",
       awayTeam: "",
       matchDate: "",
       matchTime: "",
-      scoreOdds: Array(5).fill({ score: "", coefficient: "" })
+      scoreOdds: Array(5).fill({ score: "", coefficient: "" }),
+      useHeadToHeadData: true
     });
     setErrors({});
     toast.success("Formulaire réinitialisé");
@@ -184,6 +187,29 @@ const MatchForm = ({ onSubmit, isLoading }) => {
             error={errors.matchTime}
             required
           />
+        </div>
+
+{/* Option confrontations directes */}
+        <div className="border-t border-primary/20 pt-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="useHeadToHeadData"
+                  checked={formData.useHeadToHeadData}
+                  onChange={(e) => handleInputChange('useHeadToHeadData', e.target.checked)}
+                  className="w-4 h-4 text-primary bg-surface border-primary/30 rounded focus:ring-primary/50"
+                />
+                <label htmlFor="useHeadToHeadData" className="text-sm font-medium text-white">
+                  Utiliser les données de confrontations directes
+                </label>
+              </div>
+              <div className="w-5 h-5 bg-accent/20 rounded-full flex items-center justify-center">
+                <ApperIcon name="Zap" size={12} className="text-accent" />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="border-t border-primary/20 pt-6">

@@ -55,7 +55,7 @@ const PredictionCard = ({ prediction, isLoading }) => {
     return "";
   };
 
-  return (
+return (
     <Card className={`relative overflow-hidden ${getConfidenceGlow()}`}>
       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 opacity-50" />
       
@@ -64,6 +64,9 @@ const PredictionCard = ({ prediction, isLoading }) => {
           <h3 className="text-lg font-semibold text-white flex items-center gap-2">
             <ApperIcon name="Target" size={20} className="text-primary" />
             Prédiction IA
+            {prediction.headToHeadData?.totalMatches >= 3 && (
+              <span className="ml-1 px-1 py-0.5 bg-accent/20 text-accent text-xs rounded">H2H</span>
+            )}
           </h3>
           <div className="flex items-center gap-2">
             <ApperIcon name="Zap" size={16} className="text-accent" />
@@ -73,7 +76,7 @@ const PredictionCard = ({ prediction, isLoading }) => {
 
         <div className="text-center mb-6">
           <div className="text-4xl font-display font-bold gradient-text mb-2 animate-glow">
-{prediction.predictedScore}
+            {prediction.predictedScore}
             {prediction.megapariData && (
               <span className="ml-2 px-2 py-1 bg-primary/20 text-primary text-xs rounded-full">
                 MEGAPARI
@@ -126,6 +129,35 @@ const PredictionCard = ({ prediction, isLoading }) => {
             <p className="text-xs text-gray-500">Scores analysés</p>
           </div>
         </div>
+
+        {/* Head-to-Head Stats */}
+        {prediction.headToHeadData?.totalMatches >= 3 && (
+          <div className="mt-4 pt-4 border-t border-accent/20">
+            <div className="flex items-center gap-2 mb-3">
+              <ApperIcon name="Zap" size={14} className="text-accent" />
+              <p className="text-xs text-gray-400 font-medium">Confrontations directes analysées:</p>
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-center text-xs">
+              <div className="bg-surface/30 rounded p-2">
+                <div className="text-primary font-bold">{prediction.headToHeadData.homeWinPercentage}%</div>
+                <div className="text-gray-500">{prediction.homeTeam}</div>
+              </div>
+              <div className="bg-surface/30 rounded p-2">
+                <div className="text-warning font-bold">{prediction.headToHeadData.drawPercentage}%</div>
+                <div className="text-gray-500">Nuls</div>
+              </div>
+              <div className="bg-surface/30 rounded p-2">
+                <div className="text-error font-bold">{prediction.headToHeadData.awayWinPercentage}%</div>
+                <div className="text-gray-500">{prediction.awayTeam}</div>
+              </div>
+            </div>
+            <div className="mt-2 text-center">
+              <span className="text-xs text-gray-500">
+                {prediction.headToHeadData.totalMatches} matchs • Moy: {prediction.headToHeadData.avgGoalsPerMatch} buts
+              </span>
+            </div>
+          </div>
+        )}
 
         {prediction.topPredictions && (
           <div className="mt-4 pt-4 border-t border-primary/20">

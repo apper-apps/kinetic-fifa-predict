@@ -1,11 +1,14 @@
 import predictionsData from "@/services/mockData/predictions.json";
 import { scoresService } from "./scoresService";
 import { megapariService } from "./megapariService";
+import React from "react";
+import Error from "@/components/ui/Error";
 
 class PredictionService {
   constructor() {
-this.predictions = [...predictionsData];
+    this.predictions = [...predictionsData];
     this.megapariIntegration = true;
+    this.headToHeadData = [];
   }
 
   async getAll() {
@@ -222,7 +225,7 @@ async checkAllPendingScores() {
     return results;
   }
 
-  // Nouvelle méthode pour prédictions MEGAPARI avancées
+// Nouvelle méthode pour prédictions MEGAPARI avancées
   async generateMegapariPrediction(matchData) {
     try {
       const megapariResult = await megapariService.getMegapariPredictions(
@@ -230,6 +233,12 @@ async checkAllPendingScores() {
         matchData.awayTeam,
         matchData.dateTime
       );
+
+      // Enrichir avec les données Head-to-Head si disponibles
+      let headToHeadStats = null;
+      if (matchData.useHeadToHeadData) {
+        headToHeadStats = this.getHeadToHeadStats(matchData.homeTeam, matchData.awayTeam);
+      }
 
       // Enrichir avec les calculs mathématiques
       const enhancedPrediction = {
@@ -248,14 +257,166 @@ async checkAllPendingScores() {
           geneticOptimization: megapariResult.geneticOptimization,
           methodology: megapariResult.exactScorePrediction.methodology
         },
+        headToHeadData: headToHeadStats,
         timestamp: new Date().toISOString()
       };
+
+      // Ajuster la confiance si on a des données H2H
+      if (headToHeadStats && headToHeadStats.totalMatches >= 3) {
+        enhancedPrediction.confidence = Math.min(95, enhancedPrediction.confidence + 5);
+      }
 
       return enhancedPrediction;
     } catch (error) {
       throw new Error(`Erreur prédiction MEGAPARI: ${error.message}`);
+} catch (error) {
+      throw new Error(`Erreur prédiction MEGAPARI: ${error.message}`);
     }
   }
-}
 
-export const predictionService = new PredictionService();
+  // Méthodes pour gestion des confrontations directes
+  async getHeadToHeadData() {
+    return [...this.headToHeadData];
+  }
+
+  async addHeadToHeadMatch(matchData) {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    this.headToHeadData.push({
+      ...matchData,
+      Id: this.headToHeadData.length + 1
+    });
+    return matchData;
+  }
+
+  async removeHeadToHeadMatch(id) {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    this.headToHeadData = this.headToHeadData.filter(match => match.id !== id);
+    return true;
+  }
+
+  async clearHeadToHeadData() {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    this.headToHeadData = [];
+    return true;
+  }
+
+  getHeadToHeadStats(homeTeam, awayTeam) {
+    const relevantMatches = this.headToHeadData.filter(match => 
+      (match.homeTeam === homeTeam && match.awayTeam === awayTeam) ||
+      (match.homeTeam === awayTeam && match.awayTeam === homeTeam)
+    );
+
+    if (relevantMatches.length === 0) {
+      return null;
+    }
+
+    const stats = {
+      totalMatches: relevantMatches.length,
+      homeTeamWins: 0,
+      awayTeamWins: 0,
+      draws: 0,
+      homeTeamGoals: 0,
+      awayTeamGoals: 0,
+      avgGoalsPerMatch: 0,
+      recentForm: []
+    };
+
+    relevantMatches.forEach(match => {
+      let homeGoals, awayGoals;
+      
+      if (match.homeTeam === homeTeam) {
+        homeGoals = match.homeScore;
+        awayGoals = match.awayScore;
+      } else {
+        homeGoals = match.awayScore;
+        awayGoals = match.homeScore;
+      }
+
+      stats.homeTeamGoals += homeGoals;
+      stats.awayTeamGoals += awayGoals;
+
+      if (homeGoals > awayGoals) {
+        stats.homeTeamWins++;
+        stats.recentForm.push('W');
+      } else if (homeGoals < awayGoals) {
+        stats.awayTeamWins++;
+        stats.recentForm.push('L');
+      } else {
+        stats.draws++;
+        stats.recentForm.push('D');
+      }
+    });
+
+    stats.avgGoalsPerMatch = ((stats.homeTeamGoals + stats.awayTeamGoals) / stats.totalMatches).toFixed(1);
+    stats.homeTeamAvgGoals = (stats.homeTeamGoals / stats.totalMatches).toFixed(1);
+    stats.awayTeamAvgGoals = (stats.awayTeamGoals / stats.totalMatches).toFixed(1);
+    stats.homeWinPercentage = Math.round((stats.homeTeamWins / stats.totalMatches) * 100);
+    stats.awayWinPercentage = Math.round((stats.awayTeamWins / stats.totalMatches) * 100);
+    stats.drawPercentage = Math.round((stats.draws / stats.totalMatches) * 100);
+
+    // Garder seulement les 5 derniers résultats pour la forme
+    stats.recentForm = stats.recentForm.slice(-5);
+
+    return stats;
+  }
+
+  // Méthode pour obtenir les statistiques complètes d'une équipe
+  getTeamStats(teamName) {
+    const teamMatches = this.headToHeadData.filter(match => 
+      match.homeTeam === teamName || match.awayTeam === teamName
+    );
+
+    if (teamMatches.length === 0) return null;
+
+    const stats = {
+      name: teamName,
+      matches: teamMatches.length,
+      wins: 0,
+      draws: 0,
+      losses: 0,
+      goalsFor: 0,
+      goalsAgainst: 0,
+      homeWins: 0,
+      awayWins: 0,
+      form: []
+    };
+
+    teamMatches.forEach(match => {
+      let teamGoals, opponentGoals, isHome;
+
+      if (match.homeTeam === teamName) {
+        teamGoals = match.homeScore;
+        opponentGoals = match.awayScore;
+        isHome = true;
+      } else {
+        teamGoals = match.awayScore;
+        opponentGoals = match.homeScore;
+        isHome = false;
+      }
+
+      stats.goalsFor += teamGoals;
+      stats.goalsAgainst += opponentGoals;
+
+      if (teamGoals > opponentGoals) {
+        stats.wins++;
+        if (isHome) stats.homeWins++;
+        else stats.awayWins++;
+        stats.form.push('W');
+      } else if (teamGoals < opponentGoals) {
+        stats.losses++;
+        stats.form.push('L');
+      } else {
+        stats.draws++;
+        stats.form.push('D');
+      }
+    });
+
+    stats.winPercentage = Math.round((stats.wins / stats.matches) * 100);
+    stats.avgGoalsFor = (stats.goalsFor / stats.matches).toFixed(1);
+    stats.avgGoalsAgainst = (stats.goalsAgainst / stats.matches).toFixed(1);
+    stats.goalDifference = stats.goalsFor - stats.goalsAgainst;
+    stats.form = stats.form.slice(-5); // 5 derniers matchs
+
+    return stats;
+  }
+}

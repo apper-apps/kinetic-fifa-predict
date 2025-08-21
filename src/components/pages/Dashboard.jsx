@@ -4,16 +4,16 @@ import { scoresService } from "@/services/api/scoresService";
 import { megapariService } from "@/services/api/megapariService";
 import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
-import PredictionHistory from "@/components/organisms/PredictionHistory";
-import MatchForm from "@/components/organisms/MatchForm";
 import OddsVisualization from "@/components/organisms/OddsVisualization";
+import MatchForm from "@/components/organisms/MatchForm";
+import PredictionHistory from "@/components/organisms/PredictionHistory";
 import PredictionCard from "@/components/molecules/PredictionCard";
-
+import HeadToHeadManager from "@/components/organisms/HeadToHeadManager";
 const Dashboard = () => {
   const [currentPrediction, setCurrentPrediction] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshHistory, setRefreshHistory] = useState(0);
-
+  const [headToHeadData, setHeadToHeadData] = useState([]);
 // Vérification automatique des scores au démarrage
 useEffect(() => {
     const checkScoresOnStartup = async () => {
@@ -50,6 +50,16 @@ const generatePrediction = async (matchData) => {
     setIsLoading(true);
     
     try {
+      // Analyser les données H2H si demandé
+      let h2hMessage = '';
+      if (matchData.useHeadToHeadData && headToHeadData.length > 0) {
+        const h2hStats = await predictionService.getHeadToHeadStats?.(matchData.homeTeam, matchData.awayTeam);
+        if (h2hStats && h2hStats.totalMatches > 0) {
+          h2hMessage = ` • H2H: ${h2hStats.totalMatches} confrontations analysées`;
+          toast.info(`Intégration données confrontations directes${h2hMessage}`);
+        }
+      }
+      
       toast.info('Initialisation des algorithmes MEGAPARI...');
       
       // Essayer d'abord avec MEGAPARI (ID: 1159894415)
@@ -60,14 +70,32 @@ const generatePrediction = async (matchData) => {
         await new Promise(resolve => setTimeout(resolve, 1500));
         prediction = await predictionService.generateMegapariPrediction(matchData);
         usedMegapari = true;
-        toast.success('Algorithmes génétiques MEGAPARI appliqués!');
+        
+        let successMessage = 'Algorithmes génétiques MEGAPARI appliqués!';
+        if (prediction.headToHeadData?.totalMatches >= 3) {
+          successMessage += ` (+5% confiance H2H)`;
+        }
+        toast.success(successMessage);
+        
       } catch (megapariError) {
         console.log('MEGAPARI indisponible, utilisation algorithmes standard:', megapariError.message);
         
-        // Fallback vers l'algorithme standard
+        // Fallback vers l'algorithme standard avec données H2H
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         const analysis = analyzeOdds(matchData.scoreOdds);
+        
+        // Intégrer les données H2H dans l'analyse standard
+        let adjustedConfidence = analysis.confidence;
+        let headToHeadData = null;
+        
+        if (matchData.useHeadToHeadData) {
+          headToHeadData = predictionService.getHeadToHeadStats?.(matchData.homeTeam, matchData.awayTeam);
+          if (headToHeadData && headToHeadData.totalMatches >= 3) {
+            // Ajuster la confiance basée sur les données H2H
+            adjustedConfidence = Math.min(90, analysis.confidence + 3);
+          }
+        }
         
         prediction = {
           homeTeam: matchData.homeTeam,
@@ -75,12 +103,17 @@ const generatePrediction = async (matchData) => {
           matchDateTime: matchData.dateTime,
           scoreOdds: matchData.scoreOdds,
           predictedScore: analysis.predictedScore,
-          confidence: analysis.confidence,
+          confidence: adjustedConfidence,
           topPredictions: analysis.topPredictions,
+          headToHeadData: headToHeadData,
           timestamp: new Date().toISOString()
         };
         
-        toast.warning('Prédiction standard générée (MEGAPARI indisponible)');
+        let warningMessage = 'Prédiction standard générée (MEGAPARI indisponible)';
+        if (headToHeadData?.totalMatches >= 3) {
+          warningMessage += ` • H2H intégré (+3% confiance)`;
+        }
+        toast.warning(warningMessage);
       }
 
       // Sauvegarder la prédiction
@@ -89,9 +122,15 @@ const generatePrediction = async (matchData) => {
       setCurrentPrediction(prediction);
       setRefreshHistory(prev => prev + 1);
       
-      const sourceMessage = usedMegapari ? 
-        `Prédiction MEGAPARI (ID: 1159894415): ${prediction.predictedScore} - Confiance: ${prediction.confidence}%` :
-        `Prédiction générée: ${prediction.predictedScore} - Confiance: ${prediction.confidence}%`;
+      let sourceMessage = usedMegapari ? 
+        `Prédiction MEGAPARI (ID: 1159894415): ${prediction.predictedScore}` :
+        `Prédiction générée: ${prediction.predictedScore}`;
+      
+      sourceMessage += ` - Confiance: ${prediction.confidence}%`;
+      
+      if (prediction.headToHeadData?.totalMatches >= 3) {
+        sourceMessage += ` • H2H: ${prediction.headToHeadData.homeWinPercentage}%-${prediction.headToHeadData.awayWinPercentage}%`;
+      }
       
       toast.success(sourceMessage);
       
@@ -187,10 +226,13 @@ const analyzeOdds = (scoreOdds) => {
         geneticConsistency: (geneticConsistency * 100).toFixed(1),
         coefficientAnalysis: avgCoefficient.toFixed(2),
         megapariOptimization: true
-      }
+}
     };
   };
 
+  const handleHeadToHeadUpdate = (data) => {
+    setHeadToHeadData(data);
+  };
 return (
     <div className="pt-20">
       {/* Hero Section */}
@@ -206,8 +248,13 @@ return (
           </div>
         </div>
       </div>
-      {/* Main Content */}
-    <div className="max-w-7xl mx-auto px-6 py-8">
+{/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Head-to-Head Manager */}
+        <div className="mb-8">
+          <HeadToHeadManager onDataUpdate={handleHeadToHeadUpdate} />
+        </div>
+        
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             {/* Left Column - Match Form */}
             <div className="space-y-6">
