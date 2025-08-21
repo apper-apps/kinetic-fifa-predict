@@ -3,6 +3,9 @@ import { ToastContainer } from "react-toastify";
 import LoginPage from "@/components/pages/LoginPage";
 import React, { useEffect, useState } from "react";
 import Dashboard from "@/components/pages/Dashboard";
+import StatsPage from "@/components/pages/StatsPage";
+import SettingsPage from "@/components/pages/SettingsPage";
+import Header from "@/components/organisms/Header";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -25,14 +28,36 @@ function App() {
     localStorage.removeItem('fifa-predict-auth');
   };
 
-return (
+  if (!isAuthenticated) {
+    return (
+      <>
+        <LoginPage onAuthenticate={handleAuthenticate} />
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+          style={{ zIndex: 9999 }}
+        />
+      </>
+    );
+  }
+
+  return (
     <Router>
-      <div>
+      <div className="min-h-screen bg-background">
+        <Header onLogout={handleLogout} />
+        
         <Routes>
-          <Route
-            path="/" 
-            element={isAuthenticated ? <Dashboard /> : <LoginPage onAuthenticate={handleAuthenticate} />} 
-          />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/stats" element={<StatsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Routes>
         
         <ToastContainer

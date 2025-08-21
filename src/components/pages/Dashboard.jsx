@@ -134,25 +134,22 @@ const Dashboard = () => {
     };
   };
 
-  return (
-    <div className="min-h-screen bg-background">
-    {/* Hero Section */}
-    <div
-        className="bg-gradient-to-br from-background via-secondary-500/20 to-background border-b border-primary/20">
+return (
+    <div className="pt-20">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-background via-secondary-500/20 to-background border-b border-primary/20">
         <div className="max-w-7xl mx-auto px-6 py-12">
-            <div className="text-center">
-                <h1 className="text-5xl font-display font-bold mb-4">
-                    <span className="gradient-text">FIFA</span>{" "}
-                    <span className="text-white">PREDICT</span>
-                </h1>
-                <p className="text-xl text-gray-300 mb-2">Prédictions IA pour FIFA Virtual Football
-                                </p>
-                <p className="text-gray-400 text-sm">FC 24 • Championnat d'Angleterre 4×4 • Analyse avancée des cotes
-                                </p>
-            </div>
+          <div className="text-center">
+            <h1 className="text-5xl font-display font-bold mb-4">
+              <span className="gradient-text">FIFA</span>{" "}
+              <span className="text-white">PREDICT</span>
+            </h1>
+            <p className="text-xl text-gray-300 mb-2">Prédictions IA pour FIFA Virtual Football</p>
+            <p className="text-gray-400 text-sm">FC 24 • Championnat d'Angleterre 4×4 • Analyse avancée des cotes</p>
+          </div>
         </div>
-    </div>
-    {/* Main Content */}
+      </div>
+      {/* Main Content */}
     <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             {/* Left Column - Match Form */}
