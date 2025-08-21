@@ -145,7 +145,7 @@ return (
               <span className="text-white">PREDICT</span>
             </h1>
             <p className="text-xl text-gray-300 mb-2">Prédictions IA pour FIFA Virtual Football</p>
-            <p className="text-gray-400 text-sm">FC 24 • Championnat d'Angleterre 4×4 • Analyse avancée des cotes</p>
+<p className="text-gray-400 text-sm">FIFA Virtual FC 24 • Prédictions IA • Analyse Temps Réel • Intégration 1XBET</p>
           </div>
         </div>
       </div>
@@ -181,7 +181,7 @@ return (
                         </div>
                         <span className="text-xl font-display font-bold text-white">FIFA Predict</span>
                     </div>
-                    <p className="text-gray-400 text-sm">Powered by Advanced AI • FIFA Virtual FC 24 Specialist • Intégration 1XBET • Scores en Temps Réel</p>
+<p className="text-gray-400 text-sm">Alimenté par l'IA Avancée • Spécialiste FIFA Virtual FC 24 • Intégration 1XBET • Analyses Temps Réel</p>
                 </div>
 
                 {/* Moyens de Paiement */}

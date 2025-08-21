@@ -13,10 +13,11 @@ const Header = ({ onLogout }) => {
     onLogout();
   };
 
-  const navItems = [
+const navItems = [
     { path: '/', label: 'Dashboard', icon: 'Home' },
     { path: '/stats', label: 'Statistiques', icon: 'BarChart3' },
-    { path: '/settings', label: 'Paramètres', icon: 'Settings' }
+    { path: '/settings', label: 'Paramètres', icon: 'Settings' },
+    { path: '/about', label: 'À propos', icon: 'Info' }
   ];
 
   return (

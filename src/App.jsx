@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import Dashboard from "@/components/pages/Dashboard";
 import StatsPage from "@/components/pages/StatsPage";
 import SettingsPage from "@/components/pages/SettingsPage";
+import AboutPage from "@/components/pages/AboutPage";
 import Header from "@/components/organisms/Header";
 
 function App() {
@@ -54,10 +55,11 @@ function App() {
       <div className="min-h-screen bg-background">
         <Header onLogout={handleLogout} />
         
-        <Routes>
+<Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/stats" element={<StatsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/about" element={<AboutPage />} />
         </Routes>
         
         <ToastContainer
