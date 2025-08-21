@@ -266,10 +266,8 @@ async checkAllPendingScores() {
         enhancedPrediction.confidence = Math.min(95, enhancedPrediction.confidence + 5);
       }
 
-      return enhancedPrediction;
+return enhancedPrediction;
     } catch (error) {
-      throw new Error(`Erreur prédiction MEGAPARI: ${error.message}`);
-} catch (error) {
       throw new Error(`Erreur prédiction MEGAPARI: ${error.message}`);
     }
   }
