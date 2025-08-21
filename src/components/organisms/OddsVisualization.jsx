@@ -9,28 +9,41 @@ const OddsVisualization = ({ scoreOdds, prediction }) => {
       return {
         series: [],
         categories: [],
-        colors: []
+        colors: [],
+        megapariData: null
       };
     }
 
     const sortedOdds = [...scoreOdds]
       .filter(item => item.score && item.coefficient)
-      .sort((a, b) => parseFloat(a.coefficient) - parseFloat(b.coefficient))
+      .sort((a, b) => parseFloat(b.probability) - parseFloat(a.probability)) // Tri par probabilité décroissante
       .slice(0, 15);
 
     const series = sortedOdds.map(item => parseFloat(item.probability));
     const categories = sortedOdds.map(item => item.score);
     
-    const colors = sortedOdds.map(item => {
+    // Couleurs améliorées pour MEGAPARI
+    const colors = sortedOdds.map((item, index) => {
       const prob = parseFloat(item.probability);
-      if (prob >= 15) return "#00FF87";
-      if (prob >= 10) return "#FFD700";
-      if (prob >= 7) return "#FFB800";
-      return "#6B7280";
+      const isMegapariOptimized = item.megapariOptimized || prediction?.megapariData;
+      
+      if (index === 0 && isMegapariOptimized) return "#00FF87"; // Meilleure prédiction MEGAPARI
+      if (prob >= 20) return "#00FF87"; // Très haute probabilité
+      if (prob >= 15) return "#FFD700"; // Haute probabilité
+      if (prob >= 10) return "#FFB800"; // Moyenne probabilité
+      if (prob >= 7) return "#FF8800"; // Faible probabilité
+      return "#6B7280"; // Très faible
     });
 
-    return { series, categories, colors };
-  }, [scoreOdds]);
+    // Métadonnées MEGAPARI
+    const megapariData = prediction?.megapariData ? {
+      applicationId: prediction.megapariData.applicationId,
+      geneticOptimization: prediction.megapariData.geneticOptimization,
+      methodology: prediction.megapariData.methodology
+    } : null;
+
+    return { series, categories, colors, megapariData };
+  }, [scoreOdds, prediction]);
 
   const chartOptions = {
     chart: {
@@ -95,9 +108,21 @@ const OddsVisualization = ({ scoreOdds, prediction }) => {
         backgroundColor: "#1F2937"
       },
       y: {
-        formatter: (val, { dataPointIndex }) => {
-          const coefficient = scoreOdds.find(item => item.score === chartData.categories[dataPointIndex])?.coefficient;
-          return `${val}% (Cote: ${coefficient})`;
+formatter: (val, { dataPointIndex }) => {
+          const score = chartData.categories[dataPointIndex];
+          const scoreData = scoreOdds.find(item => item.score === score);
+          const coefficient = scoreData?.coefficient;
+          const megapariOptimized = scoreData?.megapariOptimized;
+          
+          let tooltip = `${val}% (Cote: ${coefficient})`;
+          if (megapariOptimized) {
+            tooltip += `\nOptimisé MEGAPARI: ${megapariOptimized}%`;
+          }
+          if (chartData.megapariData && dataPointIndex === 0) {
+            tooltip += `\nIA Génétique: ${chartData.megapariData.applicationId}`;
+          }
+          
+          return tooltip;
         }
       }
     },

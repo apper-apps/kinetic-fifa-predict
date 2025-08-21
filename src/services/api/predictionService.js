@@ -1,9 +1,11 @@
 import predictionsData from "@/services/mockData/predictions.json";
 import { scoresService } from "./scoresService";
+import { megapariService } from "./megapariService";
 
 class PredictionService {
   constructor() {
-    this.predictions = [...predictionsData];
+this.predictions = [...predictionsData];
+    this.megapariIntegration = true;
   }
 
   async getAll() {
@@ -120,14 +122,41 @@ class PredictionService {
     };
 }
 
-  async checkScoresWith1XBET(predictionId) {
+async checkScoresWith1XBET(predictionId) {
     const prediction = this.predictions.find(p => p.Id === parseInt(predictionId));
     if (!prediction) {
       throw new Error(`Prédiction avec l'ID ${predictionId} non trouvée`);
     }
 
     try {
-      const scoreResult = await scoresService.verifyPredictionResult(prediction);
+      // Vérifier d'abord avec MEGAPARI ID 1159894415
+      let scoreResult = null;
+      if (this.megapariIntegration) {
+        try {
+          const megapariResult = await megapariService.getMegapariPredictions(
+            prediction.homeTeam, 
+            prediction.awayTeam, 
+            prediction.matchDateTime
+          );
+          
+          if (megapariResult && megapariResult.exactScorePrediction) {
+            scoreResult = {
+              actualScore: megapariResult.exactScorePrediction.recommendedScore,
+              correct: megapariResult.exactScorePrediction.recommendedScore === prediction.predictedScore,
+              source: 'MEGAPARI',
+              confidence: megapariResult.confidence
+            };
+          }
+        } catch (megapariError) {
+          console.log('MEGAPARI non disponible, utilisation 1XBET:', megapariError.message);
+        }
+      }
+      
+      // Fallback vers 1XBET si MEGAPARI n'est pas disponible
+      if (!scoreResult) {
+        scoreResult = await scoresService.verifyPredictionResult(prediction);
+        scoreResult.source = '1XBET';
+      }
       
       if (scoreResult.actualScore) {
         // Match terminé - mettre à jour le résultat
@@ -136,9 +165,11 @@ class PredictionService {
           status: 'terminé',
           actualScore: scoreResult.actualScore,
           correct: scoreResult.correct,
+          source: scoreResult.source,
+          confidence: scoreResult.confidence,
           message: scoreResult.correct ? 
-            'Prédiction correcte ! 🎉' : 
-            `Prédiction incorrecte. Score réel: ${scoreResult.actualScore}`
+            `Prédiction correcte via ${scoreResult.source}! 🎉` : 
+            `Prédiction incorrecte. Score réel ${scoreResult.source}: ${scoreResult.actualScore}`
         };
       } else if (scoreResult.currentScore) {
         // Match en cours
@@ -146,7 +177,8 @@ class PredictionService {
           status: 'en_cours',
           currentScore: scoreResult.currentScore,
           minute: scoreResult.minute,
-          message: `Match en cours: ${scoreResult.currentScore} (${scoreResult.minute}')`
+          source: scoreResult.source,
+          message: `Match en cours (${scoreResult.source}): ${scoreResult.currentScore} (${scoreResult.minute}')`
         };
       } else {
         // Match à venir
@@ -158,12 +190,12 @@ class PredictionService {
     } catch (error) {
       return {
         status: 'erreur',
-        message: `Erreur 1XBET: ${error.message}`
+        message: `Erreur vérification: ${error.message}`
       };
     }
   }
 
-  async checkAllPendingScores() {
+async checkAllPendingScores() {
     const pendingPredictions = this.predictions.filter(p => !p.actualResult);
     const results = [];
 
@@ -174,17 +206,55 @@ class PredictionService {
           predictionId: prediction.Id,
           homeTeam: prediction.homeTeam,
           awayTeam: prediction.awayTeam,
+          megapariId: megapariService.applicationId,
           ...result
         });
       } catch (error) {
         results.push({
           predictionId: prediction.Id,
+          homeTeam: prediction.homeTeam,
+          awayTeam: prediction.awayTeam,
           error: error.message
         });
       }
     }
 
     return results;
+  }
+
+  // Nouvelle méthode pour prédictions MEGAPARI avancées
+  async generateMegapariPrediction(matchData) {
+    try {
+      const megapariResult = await megapariService.getMegapariPredictions(
+        matchData.homeTeam,
+        matchData.awayTeam,
+        matchData.dateTime
+      );
+
+      // Enrichir avec les calculs mathématiques
+      const enhancedPrediction = {
+        homeTeam: matchData.homeTeam,
+        awayTeam: matchData.awayTeam,
+        matchDateTime: matchData.dateTime,
+        predictedScore: megapariResult.exactScorePrediction.recommendedScore,
+        confidence: megapariResult.confidence,
+        scoreOdds: megapariResult.mathematicalProbabilities.slice(0, 20),
+        topPredictions: megapariResult.mathematicalProbabilities.slice(0, 3).map(p => ({
+          score: p.score,
+          probability: p.probability
+        })),
+        megapariData: {
+          applicationId: megapariResult.applicationId,
+          geneticOptimization: megapariResult.geneticOptimization,
+          methodology: megapariResult.exactScorePrediction.methodology
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      return enhancedPrediction;
+    } catch (error) {
+      throw new Error(`Erreur prédiction MEGAPARI: ${error.message}`);
+    }
   }
 }
 

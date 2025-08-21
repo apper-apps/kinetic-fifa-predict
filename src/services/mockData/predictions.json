@@ -4,24 +4,43 @@
     "homeTeam": "Manchester City",
     "awayTeam": "Liverpool",
     "matchDateTime": "2024-01-15T20:30:00Z",
-    "predictedScore": "1-0",
-    "confidence": 78,
+    "predictedScore": "2-1",
+    "confidence": 87,
     "scoreOdds": [
+      {"score": "2-1", "coefficient": 3.8, "probability": "28.5"},
+      {"score": "1-1", "coefficient": 4.2, "probability": "26.3"},
+      {"score": "1-0", "coefficient": 5.1, "probability": "21.8"},
+      {"score": "0-1", "coefficient": 6.8, "probability": "16.4"},
+      {"score": "2-0", "coefficient": 7.2, "probability": "15.1"},
       {"score": "0-0", "coefficient": 8.5, "probability": "11.8"},
-      {"score": "1-0", "coefficient": 4.2, "probability": "23.8"},
-      {"score": "0-1", "coefficient": 6.1, "probability": "16.4"},
-      {"score": "1-1", "coefficient": 3.8, "probability": "26.3"},
-      {"score": "2-0", "coefficient": 12.0, "probability": "8.3"}
+      {"score": "3-1", "coefficient": 9.8, "probability": "10.2"},
+      {"score": "1-2", "coefficient": 11.5, "probability": "8.7"},
+      {"score": "0-2", "coefficient": 15.0, "probability": "6.7"},
+      {"score": "3-0", "coefficient": 18.5, "probability": "5.4"}
     ],
     "topPredictions": [
+      {"score": "2-1", "probability": "28.5"},
       {"score": "1-1", "probability": "26.3"},
-      {"score": "1-0", "probability": "23.8"},
-      {"score": "0-1", "probability": "16.4"}
+      {"score": "1-0", "probability": "21.8"}
     ],
+    "megapariData": {
+      "applicationId": "1159894415",
+      "geneticOptimization": {
+        "bestScore": "2-1",
+        "fitness": 8.7,
+        "generations": 100
+      },
+      "teamCoefficients": {
+        "manchester_city": {"attack": 0.92, "defense": 0.88, "form": 0.85, "home": 0.78},
+        "liverpool": {"attack": 0.89, "defense": 0.82, "form": 0.87, "home": 0.75}
+      },
+      "methodology": "Algorithme génétique + Probabilités mathématiques MEGAPARI"
+    },
     "timestamp": "2024-01-15T18:45:00Z",
     "actualResult": {
-      "actualScore": "1-0",
-      "correct": true
+      "actualScore": "2-1",
+      "correct": true,
+      "source": "MEGAPARI"
     }
   },
   {
@@ -29,24 +48,43 @@
     "homeTeam": "Chelsea",
     "awayTeam": "Arsenal",
     "matchDateTime": "2024-01-16T19:00:00Z",
-    "predictedScore": "0-1",
-    "confidence": 65,
+    "predictedScore": "1-2",
+    "confidence": 74,
     "scoreOdds": [
-      {"score": "0-0", "coefficient": 7.2, "probability": "13.9"},
-      {"score": "1-0", "coefficient": 5.8, "probability": "17.2"},
-      {"score": "0-1", "coefficient": 4.5, "probability": "22.2"},
+      {"score": "1-2", "coefficient": 4.1, "probability": "24.4"},
       {"score": "1-1", "coefficient": 4.8, "probability": "20.8"},
-      {"score": "2-1", "coefficient": 15.5, "probability": "6.5"}
+      {"score": "0-1", "coefficient": 5.2, "probability": "19.2"},
+      {"score": "1-0", "coefficient": 5.8, "probability": "17.2"},
+      {"score": "0-0", "coefficient": 7.2, "probability": "13.9"},
+      {"score": "2-1", "coefficient": 8.5, "probability": "11.8"},
+      {"score": "0-2", "coefficient": 9.8, "probability": "10.2"},
+      {"score": "2-0", "coefficient": 12.0, "probability": "8.3"},
+      {"score": "2-2", "coefficient": 15.5, "probability": "6.5"},
+      {"score": "3-1", "coefficient": 18.0, "probability": "5.6"}
     ],
     "topPredictions": [
-      {"score": "0-1", "probability": "22.2"},
+      {"score": "1-2", "probability": "24.4"},
       {"score": "1-1", "probability": "20.8"},
-      {"score": "1-0", "probability": "17.2"}
+      {"score": "0-1", "probability": "19.2"}
     ],
+    "megapariData": {
+      "applicationId": "1159894415",
+      "geneticOptimization": {
+        "bestScore": "1-2",
+        "fitness": 7.4,
+        "generations": 100
+      },
+      "teamCoefficients": {
+        "chelsea": {"attack": 0.84, "defense": 0.85, "form": 0.72, "home": 0.68},
+        "arsenal": {"attack": 0.86, "defense": 0.79, "form": 0.81, "home": 0.73}
+      },
+      "methodology": "Algorithme génétique + Probabilités mathématiques MEGAPARI"
+    },
     "timestamp": "2024-01-16T17:30:00Z",
     "actualResult": {
       "actualScore": "1-1",
-      "correct": false
+      "correct": false,
+      "source": "MEGAPARI"
     }
   },
   {
@@ -55,20 +93,76 @@
     "awayTeam": "Newcastle",
     "matchDateTime": "2024-01-17T21:15:00Z",
     "predictedScore": "1-1",
-    "confidence": 82,
+    "confidence": 89,
     "scoreOdds": [
+      {"score": "1-1", "coefficient": 3.2, "probability": "31.2"},
+      {"score": "1-0", "coefficient": 4.8, "probability": "20.8"},
+      {"score": "2-1", "coefficient": 5.5, "probability": "18.2"},
+      {"score": "0-1", "coefficient": 6.3, "probability": "15.9"},
+      {"score": "2-0", "coefficient": 7.8, "probability": "12.8"},
       {"score": "0-0", "coefficient": 9.1, "probability": "11.0"},
-      {"score": "1-0", "coefficient": 5.2, "probability": "19.2"},
-      {"score": "0-1", "coefficient": 7.3, "probability": "13.7"},
-      {"score": "1-1", "coefficient": 3.5, "probability": "28.6"},
-      {"score": "2-0", "coefficient": 11.8, "probability": "8.5"},
-      {"score": "0-2", "coefficient": 18.2, "probability": "5.5"}
+      {"score": "1-2", "coefficient": 10.5, "probability": "9.5"},
+      {"score": "0-2", "coefficient": 13.2, "probability": "7.6"},
+      {"score": "3-1", "coefficient": 15.8, "probability": "6.3"},
+      {"score": "2-2", "coefficient": 18.2, "probability": "5.5"}
     ],
     "topPredictions": [
-      {"score": "1-1", "probability": "28.6"},
-      {"score": "1-0", "probability": "19.2"},
-      {"score": "0-1", "probability": "13.7"}
+      {"score": "1-1", "probability": "31.2"},
+      {"score": "1-0", "probability": "20.8"},
+      {"score": "2-1", "probability": "18.2"}
     ],
+    "megapariData": {
+      "applicationId": "1159894415",
+      "geneticOptimization": {
+        "bestScore": "1-1",
+        "fitness": 8.9,
+        "generations": 100
+      },
+      "teamCoefficients": {
+        "tottenham": {"attack": 0.82, "defense": 0.76, "form": 0.69, "home": 0.71},
+        "newcastle": {"attack": 0.78, "defense": 0.83, "form": 0.76, "home": 0.74}
+      },
+      "methodology": "Algorithme génétique + Probabilités mathématiques MEGAPARI"
+    },
     "timestamp": "2024-01-17T19:45:00Z"
+  },
+  {
+    "Id": 4,
+    "homeTeam": "Manchester United",
+    "awayTeam": "Liverpool",
+    "matchDateTime": "2024-01-18T16:30:00Z",
+    "predictedScore": "0-2",
+    "confidence": 82,
+    "scoreOdds": [
+      {"score": "0-2", "coefficient": 3.9, "probability": "25.6"},
+      {"score": "1-2", "coefficient": 4.5, "probability": "22.2"},
+      {"score": "0-1", "coefficient": 5.1, "probability": "19.6"},
+      {"score": "1-1", "coefficient": 5.8, "probability": "17.2"},
+      {"score": "0-0", "coefficient": 7.2, "probability": "13.9"},
+      {"score": "1-0", "coefficient": 8.5, "probability": "11.8"},
+      {"score": "2-1", "coefficient": 10.2, "probability": "9.8"},
+      {"score": "0-3", "coefficient": 12.8, "probability": "7.8"},
+      {"score": "2-0", "coefficient": 15.5, "probability": "6.5"},
+      {"score": "2-2", "coefficient": 18.0, "probability": "5.6"}
+    ],
+    "topPredictions": [
+      {"score": "0-2", "probability": "25.6"},
+      {"score": "1-2", "probability": "22.2"},
+      {"score": "0-1", "probability": "19.6"}
+    ],
+    "megapariData": {
+      "applicationId": "1159894415",
+      "geneticOptimization": {
+        "bestScore": "0-2",
+        "fitness": 8.2,
+        "generations": 100
+      },
+      "teamCoefficients": {
+        "manchester_united": {"attack": 0.85, "defense": 0.77, "form": 0.74, "home": 0.72},
+        "liverpool": {"attack": 0.89, "defense": 0.82, "form": 0.87, "home": 0.75}
+      },
+      "methodology": "Algorithme génétique + Probabilités mathématiques MEGAPARI"
+    },
+    "timestamp": "2024-01-18T14:15:00Z"
   }
 ]

@@ -6,7 +6,7 @@ import FormField from '@/components/molecules/FormField';
 import ApperIcon from '@/components/ApperIcon';
 
 const SettingsPage = () => {
-  const [settings, setSettings] = useState({
+const [settings, setSettings] = useState({
     notifications: {
       predictions: true,
       results: true,
@@ -16,6 +16,15 @@ const SettingsPage = () => {
       autoCheck: true,
       confidenceThreshold: 70,
       defaultScoreCount: 5
+    },
+    megapari: {
+      enabled: true,
+      applicationId: '1159894415',
+      geneticAlgorithm: true,
+      mathematicalProbabilities: true,
+      teamCoefficients: true,
+      generationSize: 50,
+      mutationRate: 0.1
     },
     profile: {
       username: 'Utilisateur',
@@ -31,9 +40,16 @@ const SettingsPage = () => {
   };
 
   const handlePreferenceChange = (key, value) => {
-    setSettings(prev => ({
+setSettings(prev => ({
       ...prev,
       preferences: { ...prev.preferences, [key]: value }
+    }));
+  };
+
+  const handleMegapariChange = (key, value) => {
+    setSettings(prev => ({
+      ...prev,
+      megapari: { ...prev.megapari, [key]: value }
     }));
   };
 
@@ -44,19 +60,28 @@ const SettingsPage = () => {
     }));
   };
 
-  const saveSettings = () => {
+const saveSettings = () => {
     localStorage.setItem('fifa-predict-settings', JSON.stringify(settings));
-    toast.success('Paramètres sauvegardés avec succès !');
+    toast.success(`Paramètres sauvegardés! MEGAPARI ID: ${settings.megapari.applicationId}`);
   };
 
   const resetSettings = () => {
     const defaultSettings = {
       notifications: { predictions: true, results: true, weekly: false },
       preferences: { autoCheck: true, confidenceThreshold: 70, defaultScoreCount: 5 },
+      megapari: {
+        enabled: true,
+        applicationId: '1159894415',
+        geneticAlgorithm: true,
+        mathematicalProbabilities: true,
+        teamCoefficients: true,
+        generationSize: 50,
+        mutationRate: 0.1
+      },
       profile: { username: 'Utilisateur', timezone: 'Africa/Abidjan' }
     };
     setSettings(defaultSettings);
-    toast.info('Paramètres réinitialisés aux valeurs par défaut');
+    toast.info('Paramètres réinitialisés - MEGAPARI ID restauré');
   };
 
   return (
@@ -181,6 +206,115 @@ const SettingsPage = () => {
           </Card>
 
           {/* Prediction Preferences */}
+<Card>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center">
+                <ApperIcon name="Cpu" size={20} className="text-black" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-white">Configuration MEGAPARI</h3>
+                <p className="text-sm text-gray-400">ID: {settings.megapari.applicationId}</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between py-3 px-4 bg-surface/30 rounded-lg">
+                <div>
+                  <div className="text-white font-medium">Intégration MEGAPARI</div>
+                  <div className="text-sm text-gray-400">Utiliser l'API MEGAPARI pour les prédictions</div>
+                </div>
+                <button
+                  onClick={() => handleMegapariChange('enabled', !settings.megapari.enabled)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    settings.megapari.enabled ? 'bg-primary' : 'bg-gray-600'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      settings.megapari.enabled ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between py-3 px-4 bg-surface/30 rounded-lg">
+                <div>
+                  <div className="text-white font-medium">Algorithmes Génétiques</div>
+                  <div className="text-sm text-gray-400">Optimisation par évolution des prédictions</div>
+                </div>
+                <button
+                  onClick={() => handleMegapariChange('geneticAlgorithm', !settings.megapari.geneticAlgorithm)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    settings.megapari.geneticAlgorithm ? 'bg-primary' : 'bg-gray-600'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      settings.megapari.geneticAlgorithm ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between py-3 px-4 bg-surface/30 rounded-lg">
+                <div>
+                  <div className="text-white font-medium">Calculs Mathématiques</div>
+                  <div className="text-sm text-gray-400">Probabilités avancées et coefficients</div>
+                </div>
+                <button
+                  onClick={() => handleMegapariChange('mathematicalProbabilities', !settings.megapari.mathematicalProbabilities)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    settings.megapari.mathematicalProbabilities ? 'bg-primary' : 'bg-gray-600'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      settings.megapari.mathematicalProbabilities ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Taille Population Génétique ({settings.megapari.generationSize})
+                </label>
+                <input
+                  type="range"
+                  min="20"
+                  max="100"
+                  step="10"
+                  value={settings.megapari.generationSize}
+                  onChange={(e) => handleMegapariChange('generationSize', parseInt(e.target.value))}
+                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                />
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>20</span>
+                  <span>100</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Taux de Mutation ({(settings.megapari.mutationRate * 100).toFixed(0)}%)
+                </label>
+                <input
+                  type="range"
+                  min="0.05"
+                  max="0.3"
+                  step="0.05"
+                  value={settings.megapari.mutationRate}
+                  onChange={(e) => handleMegapariChange('mutationRate', parseFloat(e.target.value))}
+                  className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                />
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>5%</span>
+                  <span>30%</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
           <Card>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-gradient-to-r from-accent to-warning rounded-lg flex items-center justify-center">
@@ -195,8 +329,8 @@ const SettingsPage = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between py-3 px-4 bg-surface/30 rounded-lg">
                 <div>
-                  <div className="text-white font-medium">Vérification automatique 1XBET</div>
-                  <div className="text-sm text-gray-400">Vérifier automatiquement les résultats au démarrage</div>
+                  <div className="text-white font-medium">Vérification automatique</div>
+                  <div className="text-sm text-gray-400">Vérifier automatiquement les résultats MEGAPARI/1XBET</div>
                 </div>
                 <button
                   onClick={() => handlePreferenceChange('autoCheck', !settings.preferences.autoCheck)}

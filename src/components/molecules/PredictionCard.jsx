@@ -73,7 +73,12 @@ const PredictionCard = ({ prediction, isLoading }) => {
 
         <div className="text-center mb-6">
           <div className="text-4xl font-display font-bold gradient-text mb-2 animate-glow">
-            {prediction.predictedScore}
+{prediction.predictedScore}
+            {prediction.megapariData && (
+              <span className="ml-2 px-2 py-1 bg-primary/20 text-primary text-xs rounded-full">
+                MEGAPARI
+              </span>
+            )}
           </div>
           <p className="text-sm text-gray-400">Score exact prédit (1ère mi-temps)</p>
         </div>
